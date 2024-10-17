@@ -1,0 +1,56 @@
+################## IDEA & tools #
+
+# VS Code
+.vscode/
+
+# IntelliJ
+*.iml
+.idea/
+*.ipr
+*.iws
+out/
+
+# IDE configs
+/.idea
+/.project
+/.classpath
+
+# macOS specific
+.DS_Store
+
+################## misc files #
+# logs and DB
+*.log
+*.pid
+*.seed
+*.pid.lock
+hs_err_pid*
+!src/main/resources/*.db
+
+# temp files
+*.tmp
+*.swp
+*.swo
+
+################## Java & Maven #
+
+# Java
+target/
+*.jar
+*.war
+*.ear
+
+# Maven
+.mvn/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+################## tools #
+
+# Spring Boot
+.env
+.spring-boot-devtools.properties
+.spring-boot-devtools.yml
