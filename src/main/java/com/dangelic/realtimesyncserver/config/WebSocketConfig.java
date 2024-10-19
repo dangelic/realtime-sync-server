@@ -20,6 +20,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // TODO: Configure CORS for Wildcard (*) usage!
         //         registry.addEndpoint("/ws").setAllowedOrigins("*").withSockJS();
-        registry.addEndpoint("/ws").setAllowedOrigins("http://127.0.0.1:5500"); // WebSocket connection endpoint
+        registry.addEndpoint("/ws").setAllowedOrigins("http://127.0.0.1:5500").withSockJS(); // WebSocket connection endpoint
     }
 }

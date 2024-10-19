@@ -18,6 +18,8 @@ public class WebSocketPositionController {
     @SendTo("/topic/positions")   // Broadcast to subscribers
     public PositionDTO handlePositionUpdate(PositionDTO positionDTO) {
         try {
+
+            System.out.println("HI");
             // Here you need to get the clientId from the positionDTO if needed
             Long clientId = positionDTO.getClientId();
             return positionService.savePosition(clientId, positionDTO); // Save position and broadcast

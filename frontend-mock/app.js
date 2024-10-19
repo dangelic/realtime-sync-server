@@ -5,23 +5,21 @@ document.addEventListener('DOMContentLoaded', function () {
     const yCoordinateInput = document.getElementById('yCoordinate');
     const updatePositionButton = document.getElementById('updatePosition');
 
-    const socket = new WebSocket('ws://localhost:8080/ws'); // CORS!!!
+    // Create SockJS and STOMP client
+    const socket = new SockJS('http://localhost:8080/ws');
+    const stompClient = Stomp.over(socket);
 
-    // Handle incoming messages
-    socket.onmessage = function(event) {
-        const positionData = JSON.parse(event.data);
-        console.log('Message from server:', event.data);
-        displayPosition(positionData);
-    };
+    stompClient.connect({}, function (frame) {
+        console.log('Connected: ' + frame);
 
-    socket.onerror = function(event) {
-        console.error('WebSocket error observed:', event);
-    };
-    
-    // Handle successful connection
-    socket.onopen = function(event) {
-        console.log('WebSocket connection established:', event);
-    };
+        // Subscribe to the /topic/positions broadcast
+        stompClient.subscribe('/topic/positions', function (messageOutput) {
+            const positionData = JSON.parse(messageOutput.body);
+            displayPosition(positionData);
+        });
+    }, function (error) {
+        console.error('Error connecting to WebSocket: ' + error);
+    });
 
     // Function to display the received position
     function displayPosition(position) {
@@ -31,24 +29,20 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Update position when button is clicked
-    updatePositionButton.onclick = function() {
-        console.log("Trying to send information via socket connection...");
+    updatePositionButton.onclick = function () {
+        console.log("Trying to send information via WebSocket connection...");
         const clientId = clientIdInput.value;
-        const xCoordinate = xCoordinateInput.value;
-        const yCoordinate = yCoordinateInput.value;
+        const xCoordinate = parseFloat(xCoordinateInput.value);
+        const yCoordinate = parseFloat(yCoordinateInput.value);
 
         // Create position update object
         const positionUpdate = {
             clientId: clientId,
-            xCoordinate: parseFloat(xCoordinate),
-            yCoordinate: parseFloat(yCoordinate)
+            xCoordinate: xCoordinate,
+            yCoordinate: yCoordinate
         };
 
-        // Ensure the socket is open before sending a message
-        if (socket.readyState === WebSocket.OPEN) {
-            socket.send(JSON.stringify(positionUpdate));
-        } else {
-            console.error("WebSocket is not open. Ready state: " + socket.readyState);
-        }
+        // Send the message through STOMP
+        stompClient.send("/app/positions", {}, JSON.stringify(positionUpdate));
     };
 });
