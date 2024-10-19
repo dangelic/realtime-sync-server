@@ -1,18 +1,15 @@
 package com.dangelic.realtimesyncserver.controller;
 
 import com.dangelic.realtimesyncserver.dto.PositionDTO;
-import com.dangelic.realtimesyncserver.model.Client;
-import com.dangelic.realtimesyncserver.model.Position;
-import com.dangelic.realtimesyncserver.repository.ClientRepository;
-import com.dangelic.realtimesyncserver.repository.PositionRepository;
-import com.dangelic.realtimesyncserver.service.PositionService; // Import the service
+import com.dangelic.realtimesyncserver.exception.ClientRequestValidationException;
+import com.dangelic.realtimesyncserver.service.PositionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/clients/{clientId}/positions")
@@ -23,12 +20,12 @@ public class PositionController {
 
     // 1. Create or update client position
     @PostMapping
-    public ResponseEntity<PositionDTO> createOrUpdatePosition(@PathVariable Long clientId, @RequestBody PositionDTO positionDTO) {
+    public ResponseEntity<PositionDTO> createOrUpdatePosition(@PathVariable Long clientId, @Valid @RequestBody PositionDTO positionDTO) {
         try {
             PositionDTO savedPositionDTO = positionService.savePosition(clientId, positionDTO);
             return ResponseEntity.ok(savedPositionDTO);
         } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+            throw new ClientRequestValidationException("Invalid position data provided: " + e.getMessage());
         }
     }
 

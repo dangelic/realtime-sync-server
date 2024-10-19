@@ -1,10 +1,14 @@
 package com.dangelic.realtimesyncserver.dto;
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.List;
 
 public class ClientDTO {
     private Long id;
+
+    @NotBlank(message = "Name cannot be blank")
     private String name;
+
     private String status;
     private List<PositionDTO> positions; // maybe exclude it here?
 

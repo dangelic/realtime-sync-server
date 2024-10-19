@@ -1,13 +1,21 @@
 package com.dangelic.realtimesyncserver.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 public class PositionDTO {
     private Long id;
+
     // explicit definition as serialization seems to glitch here (without it confuses with "xcoordinate")
     @JsonProperty("xCoordinate")
+    @NotNull(message = "X Coordinate cannot be null")
+    @Positive(message = "X Coordinate must be positive")
     private double xCoordinate;
     @JsonProperty("yCoordinate")
+    @NotNull(message = "Y Coordinate cannot be null")
+    @Positive(message = "Y Coordinate must be positive")
     private double yCoordinate;
+
     private Long clientId;
 
     // Constructors

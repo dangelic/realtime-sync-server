@@ -2,12 +2,15 @@ package com.dangelic.realtimesyncserver.controller;
 
 import com.dangelic.realtimesyncserver.dto.ClientDTO;
 import com.dangelic.realtimesyncserver.dto.PositionDTO;
+import com.dangelic.realtimesyncserver.exception.ClientRequestValidationException;
 import com.dangelic.realtimesyncserver.model.Client;
 import com.dangelic.realtimesyncserver.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,7 +23,7 @@ public class ClientController {
     private ClientRepository clientRepository;
 
     @PostMapping("/connect")
-    public ClientDTO connectClient(@RequestBody ClientDTO clientData) {
+    public ClientDTO connectClient(@Valid @RequestBody ClientDTO clientData) {
         Client client = new Client(clientData.getName(), clientData.getStatus());
         Client savedClient = clientRepository.save(client);
         return new ClientDTO(savedClient.getId(), savedClient.getName(), savedClient.getStatus(), null);
@@ -53,7 +56,7 @@ public class ClientController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ClientDTO> updateClient(@PathVariable Long id, @RequestBody ClientDTO clientData) {
+    public ResponseEntity<ClientDTO> updateClient(@PathVariable Long id, @Valid @RequestBody ClientDTO clientData) {
         Optional<Client> clientOptional = clientRepository.findById(id);
         if (clientOptional.isPresent()) {
             Client client = clientOptional.get();
