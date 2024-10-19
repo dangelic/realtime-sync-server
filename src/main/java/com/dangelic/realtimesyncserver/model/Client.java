@@ -3,15 +3,23 @@ package com.dangelic.realtimesyncserver.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "clients")
 public class Client {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
+    private String status; // e.g., connected, disconnected
 
+    // Constructors
+    public Client() {}
+
+    public Client(String name, String status) {
+        this.name = name;
+        this.status = status;
+    }
+
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -26,5 +34,13 @@ public class Client {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
