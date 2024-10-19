@@ -1,5 +1,6 @@
 package com.dangelic.realtimesyncserver.service;
 
+import com.dangelic.realtimesyncserver.dto.PositionDTO;
 import com.dangelic.realtimesyncserver.model.Client;
 import com.dangelic.realtimesyncserver.model.Position;
 import com.dangelic.realtimesyncserver.repository.ClientRepository;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PositionService {
@@ -19,34 +21,34 @@ public class PositionService {
     @Autowired
     private ClientRepository clientRepository;
 
-    public Position savePosition(Long clientId, Position position) {
+    public PositionDTO savePosition(Long clientId, PositionDTO positionDTO) {
         Client client = clientRepository.findById(clientId)
                 .orElseThrow(() -> new RuntimeException("Client not found with id " + clientId));
+
+        Position position = new Position();
+        position.setXCoordinate(positionDTO.getXCoordinate());
+        position.setYCoordinate(positionDTO.getYCoordinate());
         position.setClient(client);
-        return positionRepository.save(position);
+
+        Position savedPosition = positionRepository.save(position);
+
+        // Convert saved position to DTO before returning
+        return new PositionDTO(savedPosition.getId(), savedPosition.getXCoordinate(), savedPosition.getYCoordinate(), clientId);
     }
 
-    public Position getPositionForClient(Long clientId) {
+    public List<PositionDTO> getAllPositionsForClient(Long clientId) {
         Client client = clientRepository.findById(clientId)
                 .orElseThrow(() -> new RuntimeException("Client not found with id " + clientId));
         return positionRepository.findByClient(client)
-                .stream()  // Convert List to Stream to get first element
-                .findFirst()  // Return an Optional
-                .orElseThrow(() -> new RuntimeException("No position found for client with id " + clientId));
+                .stream()
+                .map(position -> new PositionDTO(position.getId(), position.getXCoordinate(), position.getYCoordinate(), clientId))
+                .collect(Collectors.toList());
     }
 
-    public List<Position> getAllPositions() {
-        return positionRepository.findAll();
-    }
-
-    public Position updatePosition(Long positionId, Position newPositionData) {
+    public PositionDTO getPositionById(Long positionId) {
         Position position = positionRepository.findById(positionId)
                 .orElseThrow(() -> new RuntimeException("Position not found with id " + positionId));
-
-        position.setXCoordinate(newPositionData.getXCoordinate());
-        position.setYCoordinate(newPositionData.getYCoordinate());
-
-        return positionRepository.save(position);
+        return new PositionDTO(position.getId(), position.getXCoordinate(), position.getYCoordinate(), position.getClient().getId());
     }
 
     public void deletePosition(Long positionId) {
@@ -54,11 +56,5 @@ public class PositionService {
             throw new RuntimeException("Position not found with id " + positionId);
         }
         positionRepository.deleteById(positionId);
-    }
-
-    public List<Position> getAllPositionsForClient(Long clientId) {
-        Client client = clientRepository.findById(clientId)
-                .orElseThrow(() -> new RuntimeException("Client not found with id " + clientId));
-        return positionRepository.findByClient(client);  // This is now a List
     }
 }
