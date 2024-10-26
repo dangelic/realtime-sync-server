@@ -1,33 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>Real-Time Position Tracker</title>
-
-    <!-- Include SockJS and StompJS -->
-    <script src="https://cdn.jsdelivr.net/sockjs/1.0.3/sockjs.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+  <meta charset="UTF-8">
+  <title>Checkerboard WebSocket Client</title>
+  <style>
+    canvas {
+      border: 1px solid black;
+      display: block;
+      margin: auto;
+    }
+    #register-section {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+  </style>
 </head>
 <body>
-    <h1>Real-Time Position Tracker</h1>
-    <div>
-        <label for="clientId">Client ID:</label>
-        <input type="number" id="clientId" required>
-        <br>
-        <label for="xCoordinate">X Coordinate:</label>
-        <input type="number" id="xCoordinate" required>
-        <br>
-        <label for="yCoordinate">Y Coordinate:</label>
-        <input type="number" id="yCoordinate" required>
-        <br>
-        <button id="updatePosition">Update Position</button>
-    </div>
-    
-    <h2>Positions:</h2>
-    <ul id="positionsList"></ul>
 
-    <script src="app.js"></script>
+<label for="clientId">Client ID:</label>
+<input type="text" id="clientId" placeholder="Enter your client ID" />
+<button onclick="registerClient()">Register</button>
+
+<div id="register-section">
+  <label for="clientName">client name:</label>
+  <input type="text" id="clientName" required>
+  <button onclick="registerClient()">Register</button>
+</div>
+
+<canvas id="checkerboard" width="400" height="400"></canvas>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
