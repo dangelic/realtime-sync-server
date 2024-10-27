@@ -29,15 +29,20 @@ public class PositionService {
         Client client = clientRepository.findById(clientId)
                 .orElseThrow(() -> new RuntimeException("Client not found with id: " + clientId));
 
-        // Create a new Position entity
-        Position position = new Position();
+        // Check if the client already has a position
+        Position position = positionRepository.findByClient(client).orElse(null);
 
-        // Set the properties of the Position entity using PositionDTO getters
+        if (position == null) {
+            // If no position exists, create a new one
+            position = new Position();
+            position.setClient(client); // Set the Client object here
+        }
+
+        // Update the coordinates of the position
         position.setXCoordinate(positionDTO.getXCoordinate());
         position.setYCoordinate(positionDTO.getYCoordinate());
-        position.setClient(client); // Set the Client object here
 
-        // Save the position in the database
+        // Save the updated position in the database
         Position savedPosition = positionRepository.save(position);
 
         // Create DTO for the saved position
@@ -53,6 +58,7 @@ public class PositionService {
 
         return savedPositionDTO;
     }
+
 
     public List<PositionDTO> getAllPositionsForClient(Long clientId) {
         Client client = clientRepository.findById(clientId)
